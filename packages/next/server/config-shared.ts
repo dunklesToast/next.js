@@ -87,6 +87,7 @@ export type NextConfig = { [key: string]: any } & {
   useFileSystemPublicRoutes?: boolean
   generateBuildId?: () => string | null | Promise<string | null>
   generateEtags?: boolean
+  exportPageData?: boolean
   pageExtensions?: string[]
   compress?: boolean
   poweredByHeader?: boolean

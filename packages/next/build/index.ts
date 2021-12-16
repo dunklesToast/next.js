@@ -2046,6 +2046,7 @@ export default async function build(
         pageExtensions: config.pageExtensions,
         buildManifest,
         gzipSize: config.experimental.gzipSize,
+        exportPageData: config.exportPageData,
       })
     )
 

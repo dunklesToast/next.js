@@ -82,6 +82,10 @@ export interface PageInfo {
   ssgPageDurations: number[] | undefined
 }
 
+export type PageInfoData = {
+  name: string
+} & Partial<PageInfo>
+
 export async function printTreeView(
   list: readonly string[],
   pageInfos: Map<string, PageInfo>,
@@ -94,6 +98,7 @@ export async function printTreeView(
     buildManifest,
     useStatic404,
     gzipSize = true,
+    exportPageData,
   }: {
     distPath: string
     buildId: string
@@ -102,8 +107,10 @@ export async function printTreeView(
     buildManifest: BuildManifest
     useStatic404: boolean
     gzipSize?: boolean
+    exportPageData?: boolean
   }
 ) {
+  const pageInfoData: PageInfoData[] = []
   const getPrettySize = (_size: number): string => {
     const size = prettyBytes(_size)
     // green for 0-130kb
@@ -311,6 +318,11 @@ export async function printTreeView(
         ])
       })
     }
+
+    pageInfoData.push({
+      name: item,
+      ...pageInfo,
+    })
   })
 
   const sharedFilesSize = sizeData.sizeCommonFiles
@@ -404,6 +416,19 @@ export async function printTreeView(
   )
 
   console.log()
+
+  if (exportPageData) {
+    await fs.writeFile(
+      path.join(distPath, 'page-data.json'),
+      JSON.stringify({
+        pages: pageInfoData,
+        sizeData: sizeData,
+        sharedCssFiles,
+        sharedFiles,
+        hasCustomApp,
+      })
+    )
+  }
 }
 
 export function printCustomRoutes({
